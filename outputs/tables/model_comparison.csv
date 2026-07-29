@@ -1,0 +1,8 @@
+"Metric","Simple_LR","Multiple_LR"
+"R2 (Train)",0.6498,0.8547
+"Adjusted R2 (Train)",0.6489,0.8502
+"R2 (Test)",0.489,0.7553
+"RMSE (Test, log scale)",0.5434,0.3761
+"MAE (Test, log scale)",0.4451,0.2959
+"No. of Predictors",1,12
+"Significant Predictors (p<0.05)",1,11

@@ -1,0 +1,7 @@
+"","log(Valuation)","log(Total Funding)","log(Revenue)","Funding Rounds","Team Size","Years Since Founding"
+"log(Valuation)",1,0.79,0.37,0.49,0.31,-0.04
+"log(Total Funding)",0.79,1,0.26,0.57,0.24,-0.02
+"log(Revenue)",0.37,0.26,1,0.27,0.52,0.01
+"Funding Rounds",0.49,0.57,0.27,1,0.2,0
+"Team Size",0.31,0.24,0.52,0.2,1,-0.06
+"Years Since Founding",-0.04,-0.02,0.01,0,-0.06,1
