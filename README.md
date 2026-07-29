@@ -1,143 +1,421 @@
-# What Influences Startup Valuation?
-### A Data-Driven Analysis Using Simple & Multiple Linear Regression in R
+# 📈 What Influences Startup Valuation?
 
-This project investigates the determinants of startup valuation using Simple
-Linear Regression (SLR) and Multiple Linear Regression (MLR) in R — total
-funding raised, annual revenue, funding rounds, team size, company age, and
-industry sector are used to explain and predict `log(valuation)`.
+### Statistical Modeling of Startup Valuation Using Linear Regression in R
 
-It is a fully reproducible, end-to-end R pipeline: one command regenerates
-the dataset, cleans it, runs the EDA, fits both models, produces every
-figure/table, and prints the model comparison.
+An end-to-end statistical analysis exploring how **funding, revenue, team size, company maturity, funding activity, and industry** relate to startup valuation.
+
+The project moves from **Exploratory Data Analysis (EDA)** to **Simple Linear Regression (SLR)** and **Multiple Linear Regression (MLR)**, followed by model diagnostics, predictor interpretation, and out-of-sample evaluation.
+
+> **Key Result:** The multiple regression model explains approximately **85.5% of the variation in log startup valuation on the training data** and achieves a **test R² of ~0.755**, substantially outperforming a funding-only baseline.
 
 ---
 
-## Crunchbase Dataset
+## 🎯 The Question
 
-The original raw Kaggle file is kept in `data/raw/` for provenance but is not
-read by any script.
+Startup valuations are influenced by far more than how much capital a company has raised.
+
+This analysis investigates:
+
+> **Which measurable startup characteristics are most strongly associated with valuation, and how much explanatory power do they provide?**
+
+The analysis considers factors including:
+
+- Total funding
+- Revenue
+- Team size
+- Company age
+- Number of funding rounds
+- Industry
+
+The goal is not only to fit a regression model, but to **understand the statistical relationships behind startup valuation and evaluate whether those relationships generalize to unseen data.**
 
 ---
 
-## Project structure
+## 📊 Analysis at a Glance
 
+| Model | Train R² | Adjusted R² | Test R² | Test RMSE | Test MAE |
+|:---|---:|---:|---:|---:|---:|
+| Simple Linear Regression | 0.650 | 0.649 | 0.489 | 0.543 | 0.445 |
+| **Multiple Linear Regression** | **0.855** | **0.850** | **0.755** | **0.376** | **0.296** |
+
+The multiple regression model produces a substantial improvement over the funding-only baseline.
+
+**Test R² increases from 0.489 → 0.755**, while both RMSE and MAE decrease.
+
+---
+
+# 🔎 Exploratory Data Analysis
+
+Before modeling, the dataset was examined for distributional characteristics, relationships between numerical variables, and differences across startup industries.
+
+## Distribution & Log Transformation
+
+Startup financial variables tend to be strongly right-skewed: a relatively small number of companies can have valuations, revenues, or funding amounts far larger than the majority.
+
+Log transformations were therefore used to reduce skewness and make relationships more suitable for linear modeling.
+
+<p align="center">
+  <img src="outputs/figures/fig1_log_transformation.png"
+       width="850"
+       alt="Distribution before and after log transformation">
+</p>
+
+<p align="center">
+  <i>Distributional behavior before and after log transformation.</i>
+</p>
+
+---
+
+## Relationships Between Startup Characteristics
+
+A correlation analysis was used to examine how numerical startup characteristics move together, while industry-level comparisons provide context for differences in valuation across sectors.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<img src="outputs/figures/fig2_correlation_matrix.png" width="100%" alt="Correlation matrix">
+</td>
+<td width="50%" valign="top">
+<img src="outputs/figures/fig3_valuation_by_industry.png" width="100%" alt="Startup valuation by industry">
+</td>
+</tr>
+<tr>
+<td align="center"><b>Correlation Structure</b></td>
+<td align="center"><b>Valuation Across Industries</b></td>
+</tr>
+</table>
+
+These exploratory relationships help identify promising predictors while also highlighting why valuation should not be explained through a single variable alone.
+
+---
+
+# 📉 Baseline Model — Simple Linear Regression
+
+The first model establishes a baseline using **total funding as the primary predictor of startup valuation**.
+
+This asks a simple question:
+
+> **How much of startup valuation can be explained by funding alone?**
+
+<p align="center">
+  <img src="outputs/figures/fig4_slr_scatter.png"
+       width="800"
+       alt="Simple linear regression of startup valuation and funding">
+</p>
+
+<p align="center">
+  <i>Relationship between funding and valuation under the simple regression model.</i>
+</p>
+
+### Baseline Performance
+
+The Simple Linear Regression model achieves:
+
+- **Train R²:** 0.650
+- **Adjusted R²:** 0.649
+- **Test R²:** 0.489
+- **Test RMSE:** 0.543
+- **Test MAE:** 0.445
+
+Funding alone therefore captures a meaningful portion of valuation variation, but its weaker performance on unseen data suggests that **valuation depends on additional startup characteristics**.
+
+---
+
+# 🚀 Multiple Linear Regression
+
+The analysis was expanded to a Multiple Linear Regression model incorporating additional company-level and industry-level information.
+
+Conceptually, the model estimates valuation using:
+
+```text
+Funding
++ Revenue
++ Team Size
++ Company Age
++ Funding Rounds
++ Industry
 ```
-.
-├── R/
-│   ├── 00_simulate_dataset.R          # builds the 500-row dataset (see note above)
-│   ├── 01_preprocessing.R             # imputation, log transforms, encoding, split
-│   ├── 02_eda.R                       # Figures 1, 2, 3, 9
-│   ├── 03_simple_linear_regression.R  # Figures 4, 5 + SLR summary table
-│   ├── 04_multiple_linear_regression.R# Figures 6, 7, 8, 10 + MLR/VIF tables
-│   ├── 05_model_comparison.R          # SLR vs MLR head-to-head table
-│   └── utils.R                        # shared ggplot theme / constants
-├── run_all.R                          # runs every step above, in order
-├── install_packages.R                 # installs all R dependencies
+
+This allows the relationship between each predictor and valuation to be examined **while controlling for the other variables in the model**.
+
+## Actual vs Predicted Valuation
+
+<p align="center">
+  <img src="outputs/figures/fig6_mlr_actual_vs_predicted.png"
+       width="820"
+       alt="Actual versus predicted startup valuation">
+</p>
+
+<p align="center">
+  <i>Actual vs predicted log valuation under the Multiple Linear Regression model.</i>
+</p>
+
+Predictions clustering closer to the ideal relationship indicate substantially stronger explanatory performance than the single-predictor baseline.
+
+---
+
+# ⚖️ SLR vs MLR
+
+The progression from a funding-only model to a multivariable model produces a clear improvement.
+
+| Metric | SLR | MLR | Improvement |
+|:---|---:|---:|:---|
+| Train R² | 0.650 | **0.855** | Higher explained variance |
+| Adjusted R² | 0.649 | **0.850** | Improvement remains after accounting for additional predictors |
+| Test R² | 0.489 | **0.755** | Stronger generalization |
+| Test RMSE | 0.543 | **0.376** | Lower prediction error |
+| Test MAE | 0.445 | **0.296** | Lower average absolute error |
+
+### Key Takeaway
+
+> **Funding matters, but funding alone does not tell the full story.**
+
+Adding company and industry characteristics raises held-out R² from approximately **0.49 to 0.76**, showing that startup valuation is better represented as a **multifactor relationship**.
+
+---
+
+# 🧠 What Drives Startup Valuation?
+
+Regression coefficients can be difficult to compare directly when predictors use different units.
+
+To improve interpretability, standardized coefficients were examined to compare the relative contribution of predictors on a common scale.
+
+<p align="center">
+  <img src="outputs/figures/fig8_standardized_coefficients.png"
+       width="820"
+       alt="Standardized regression coefficients">
+</p>
+
+<p align="center">
+  <i>Relative contribution of predictors based on standardized regression coefficients.</i>
+</p>
+
+## Main Findings
+
+**Total Funding** emerges as the strongest predictor, with a standardized coefficient of approximately **β ≈ 0.64**.
+
+**Industry** also contributes meaningful information, indicating that startups operating in different sectors can exhibit valuation premiums or discounts even after accounting for other company characteristics.
+
+**Company Age** becomes less informative after controlling for funding stage and other predictors, suggesting that simply being older does not necessarily imply a higher valuation.
+
+Overall, the results suggest that valuation reflects a combination of **capital raised, company characteristics, and industry context** rather than maturity alone.
+
+---
+
+# 🏭 Industry & Funding Activity
+
+Industry-level differences were explored further by examining funding-round activity across sectors.
+
+<p align="center">
+  <img src="outputs/figures/fig9_funding_rounds_by_industry.png"
+       width="800"
+       alt="Funding rounds by startup industry">
+</p>
+
+<p align="center">
+  <i>Variation in funding activity across startup industries.</i>
+</p>
+
+This provides additional context for interpreting industry effects in the regression model: sectors can differ not only in valuation, but also in their typical funding trajectories.
+
+---
+
+# 🩺 Regression Diagnostics
+
+A high R² alone is not sufficient evidence of a reliable regression model.
+
+Diagnostic analysis was therefore performed to assess model behavior and check whether important linear regression assumptions were being violated.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<img src="outputs/figures/fig5_slr_diagnostics.png" width="100%" alt="SLR diagnostic plots">
+</td>
+<td width="50%" valign="top">
+<img src="outputs/figures/fig7_mlr_diagnostics.png" width="100%" alt="MLR diagnostic plots">
+</td>
+</tr>
+<tr>
+<td align="center"><b>SLR Diagnostics</b></td>
+<td align="center"><b>MLR Diagnostics</b></td>
+</tr>
+</table>
+
+The diagnostic workflow examines areas such as:
+
+- Linearity
+- Residual behavior
+- Normality
+- Constant variance
+- Potential influential observations
+
+---
+
+## Multicollinearity
+
+Because the multiple regression model contains several related startup characteristics, multicollinearity was assessed using **Variance Inflation Factors (VIF)**.
+
+<p align="center">
+  <img src="outputs/figures/fig10_vif.png"
+       width="760"
+       alt="Variance Inflation Factors">
+</p>
+
+<p align="center">
+  <i>VIF analysis for predictors included in the multiple regression model.</i>
+</p>
+
+This step helps ensure that coefficient interpretation is not being distorted by excessive linear dependence among predictors.
+
+---
+
+# 🔬 Methodology
+
+The analysis follows a reproducible statistical modeling workflow:
+
+**1. Data preparation**  
+The startup dataset was loaded, inspected, cleaned, and prepared for statistical analysis.
+
+**2. Exploratory analysis**  
+Variable distributions, correlations, industry differences, and funding patterns were examined.
+
+**3. Transformation**  
+Highly skewed financial variables were log-transformed to improve distributional behavior and linear model suitability.
+
+**4. Baseline modeling**  
+Simple Linear Regression was used to quantify the relationship between funding and valuation.
+
+**5. Multivariable modeling**  
+Multiple Linear Regression incorporated additional startup characteristics and industry information.
+
+**6. Statistical interpretation**  
+Model coefficients, significance, standardized effects, and overall explanatory power were evaluated.
+
+**7. Diagnostics**  
+Residual behavior, regression assumptions, influential observations, and multicollinearity were assessed.
+
+**8. Out-of-sample evaluation**  
+Models were compared using held-out test data with R², RMSE, and MAE.
+
+---
+
+# 🛠 Tech Stack
+
+| Area | Tools |
+|:---|:---|
+| Language | **R** |
+| Data Manipulation | `dplyr`, `tidyr` |
+| Visualization | `ggplot2` |
+| Statistical Modeling | `lm()` |
+| Model Evaluation | R², Adjusted R², RMSE, MAE |
+| Diagnostics | Residual analysis, VIF |
+| Reproducibility | Script-based analysis pipeline |
+
+---
+
+# 📁 Repository Structure
+
+```text
+startup_valuation_analysis/
+│
 ├── data/
-│   ├── raw/                           # original Kaggle CSV (not used directly, see note)
-│   └── processed/                     # generated + cleaned data, train/test splits
+│   └── ...
+│
 ├── outputs/
-│   ├── figures/                       # all 10 figures as .png
-│   └── tables/                        # all model/summary tables as .csv, saved model .rds files
-└── SESSION_INFO.txt                   # R version + package versions used to build this
+│   ├── figures/
+│   │   ├── fig1_log_transformation.png
+│   │   ├── fig2_correlation_matrix.png
+│   │   ├── fig3_valuation_by_industry.png
+│   │   ├── fig4_slr_scatter.png
+│   │   ├── fig5_slr_diagnostics.png
+│   │   ├── fig6_mlr_actual_vs_predicted.png
+│   │   ├── fig7_mlr_diagnostics.png
+│   │   ├── fig8_standardized_coefficients.png
+│   │   ├── fig9_funding_rounds_by_industry.png
+│   │   └── fig10_vif.png
+│   │
+│   └── ...
+│
+├── R/
+│   └── ...
+│
+└── README.md
 ```
 
-## Variables
+---
 
-| Variable | Type | Description |
-|---|---|---|
-| `startup_id` | categorical | unique ID (e.g. `ST0001`) |
-| `industry` | categorical | one of 8 sectors (AI/ML, FinTech, SaaS, HealthTech, EdTech, BioTech, CleanTech, E-Commerce) |
-| `country` | categorical | HQ country (USA, India, UK, Germany, Singapore, Canada, Israel, Brazil) |
-| `year_founded` | numeric | year incorporated |
-| `years_since_founding` | numeric | 2024 − year_founded |
-| `funding_rounds` | numeric | total external funding rounds (1–8) |
-| `total_funding_m` | numeric (USD M) | cumulative funding raised |
-| `annual_revenue_m` | numeric (USD M) | most recent annual revenue (7% missing) |
-| `team_size` | numeric | headcount at last funding round (4% missing) |
-| `valuation_m` | numeric (USD M) | **target** — post-money valuation at last round |
+# ▶️ Reproducing the Analysis
 
-## How to run
+Clone the repository:
 
 ```bash
-# 1. Install R (>= 4.1) if you don't have it, then install dependencies:
-Rscript install_packages.R
-
-# 2. Run the full pipeline:
-Rscript run_all.R
+git clone <repository-url>
+cd startup_valuation_analysis
 ```
 
-This regenerates everything in `data/processed/` and `outputs/` from
-scratch. Total runtime is a few seconds.
+Open the project in R/RStudio and install any required packages that are not already available.
 
-To run a single stage (e.g. just the EDA) once the earlier stages have been
-run at least once:
+Run the analysis pipeline from the project root.
 
-```bash
-Rscript R/02_eda.R
+The workflow will generate the statistical results and visualizations stored under:
+
+```text
+outputs/
+└── figures/
 ```
 
-## Methodology
+---
 
-1. **Simulation** (`00`): builds more than 500-row dataset.
-2. **Pre-processing** (`01`): group-wise median imputation of
-   `annual_revenue_m` by industry, global median imputation of `team_size`,
-   `log1p()` transform of the three skewed financial variables, `industry`
-   releveled with `AI/ML` as the reference category, a conservative 3×IQR
-   outlier check on `log(valuation)`, and an 80/20 train/test split
-   (`caret::createDataPartition`, seeded).
-3. **EDA** (`02`): distribution shape before/after log transform, Pearson
-   correlation matrix, valuation by industry, funding rounds vs valuation by
-   industry.
-4. **SLR** (`03`): `log(valuation) ~ log(total_funding)`, fit on the training
-   set, evaluated on the held-out test set.
-5. **MLR** (`04`): `log(valuation) ~ log(funding) + log(revenue) + rounds +
-   team_size + years_since_founding + industry`, with VIF multicollinearity
-   diagnostics and standardised (β) coefficients for predictor-importance
-   ranking.
-6. **Comparison** (`05`): SLR vs MLR side-by-side on R², adjusted R², test
-   RMSE/MAE, and predictor significance counts.
+# 💡 Key Insights
 
-## Results
+The analysis leads to three main conclusions:
 
-Fitted on this project's generated data (your numbers will vary slightly if
-you re-run the simulation with a different seed):
+1. **Funding is strongly associated with startup valuation**, but it is not sufficient by itself to explain valuation differences.
 
-| Metric | Simple LR | Multiple LR |
-|---|---|---|
-| R² (train) | 0.650 | 0.855 |
-| Adjusted R² (train) | 0.649 | 0.850 |
-| R² (test) | 0.489 | 0.755 |
-| RMSE (test, log scale) | 0.543 | 0.376 |
-| MAE (test, log scale) | 0.445 | 0.296 |
-| Predictors | 1 | 12 |
-| Significant predictors (p<0.05) | 1/1 | 11/12 |
-| Max VIF | — | 1.64 (no multicollinearity) |
+2. **A multivariable approach performs substantially better**, increasing held-out R² from **0.489 to 0.755** while reducing prediction error.
 
-Key findings (see `outputs/tables/` for full detail):
+3. **Industry and company characteristics provide information beyond funding**, reinforcing that startup valuation is a multidimensional phenomenon.
 
-- **Total funding raised** is by far the strongest predictor of valuation
-  (standardised β ≈ 0.64), consistent with funding acting as a market signal
-  of investor conviction.
-- **Industry sector** creates large, statistically significant premiums and
-  discounts relative to AI/ML — EdTech and E-Commerce are the most heavily
-  discounted sectors in this sample.
-- **Years since founding** is not a significant predictor once funding stage
-  is controlled for — age alone doesn't move valuation.
-- No multicollinearity concerns (all VIFs well under 5).
+---
 
-## Dependencies
+# ⚠️ Interpretation & Limitations
 
-R ≥ 4.1, with: `tidyverse`, `caret`, `e1071`, `car`, `Metrics`, `corrplot`,
-`gridExtra`, `scales`, `reshape2`. See `install_packages.R` and
-`SESSION_INFO.txt` for exact versions used to build this repo.
+The regression models identify **statistical associations**, not causal effects.
 
-## References
+A significant coefficient does not imply that changing a predictor will directly cause startup valuation to change by the estimated amount.
 
-1. Crunchbase. (2023). *Crunchbase Annual Startup Funding Report 2022.*
-2. Gompers, P., Gornall, W., Kaplan, S. N., & Strebulaev, I. A. (2020). How do
-   venture capitalists make decisions? *Journal of Financial Economics*,
-   135(1), 169–190.
-3. Kaggle. (2023). *Startup Investments (Crunchbase) Dataset.*
-   https://www.kaggle.com/datasets/arindam235/startup-investments-crunchbase
+Potential limitations include:
 
+- Omitted variables that may influence valuation
+- Industry-specific market dynamics
+- Extreme valuations and influential observations
+- Relationships that may not be fully linear
+- Dataset-specific sampling effects
+
+The results should therefore be interpreted as evidence about **relationships within the available data**, rather than causal estimates of startup value.
+
+---
+
+# 🔮 Future Extensions
+
+This statistical analysis provides a strong baseline for extending the project into a broader startup valuation modeling system.
+
+Potential next steps include:
+
+- Regularized regression with **Ridge, Lasso, and Elastic Net**
+- Tree-based models such as **Random Forest and Gradient Boosting**
+- Feature engineering around funding efficiency and growth
+- Cross-validation and systematic model selection
+- Explainability using feature importance and SHAP
+- Startup valuation prediction through an interactive interface
+- Automated data ingestion and model retraining
+
+---
+
+## 📌 Final Takeaway
+
+> Startup valuation cannot be reduced to a single metric.
+
+Funding provides the strongest individual signal in this analysis, but combining financial, operational, and industry information produces a substantially stronger model.
+
+The project demonstrates the complete statistical workflow from **EDA → transformation → regression → diagnostics → interpretation → out-of-sample evaluation**, with an emphasis on understanding *why* the model behaves as it does rather than treating prediction performance as the only objective.
