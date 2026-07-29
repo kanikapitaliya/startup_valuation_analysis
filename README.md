@@ -138,15 +138,6 @@ R ≥ 4.1, with: `tidyverse`, `caret`, `e1071`, `car`, `Metrics`, `corrplot`,
 2. Gompers, P., Gornall, W., Kaplan, S. N., & Strebulaev, I. A. (2020). How do
    venture capitalists make decisions? *Journal of Financial Economics*,
    135(1), 169–190.
-3. Kaplan, S. N., & Lerner, J. (2010). It ain't broke: The past, present, and
-   future of venture capital. *Journal of Applied Corporate Finance*, 22(2),
-   36–47.
-4. James, G., Witten, D., Hastie, T., & Tibshirani, R. (2021). *An
-   Introduction to Statistical Learning with Applications in R* (2nd ed.).
-   Springer.
-5. Kaggle. (2023). *Startup Investments (Crunchbase) Dataset.*
+3. Kaggle. (2023). *Startup Investments (Crunchbase) Dataset.*
    https://www.kaggle.com/datasets/arindam235/startup-investments-crunchbase
 
-## License
-
-MIT — see `LICENSE`.
