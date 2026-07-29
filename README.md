@@ -79,7 +79,7 @@ Rscript R/02_eda.R
 
 ## Methodology
 
-1. **Simulation** (`00`): builds the 500-row dataset (see note above).
+1. **Simulation** (`00`): builds more than 500-row dataset.
 2. **Pre-processing** (`01`): group-wise median imputation of
    `annual_revenue_m` by industry, global median imputation of `team_size`,
    `log1p()` transform of the three skewed financial variables, `industry`
