@@ -318,8 +318,25 @@ Models were compared using held-out test data with R², RMSE, and MAE.
 ```text
 startup_valuation_analysis/
 │
+├── R/
+│   ├── 00_simulate_dataset.R
+│   ├── 01_preprocessing.R
+│   ├── 02_eda.R
+│   ├── 03_simple_linear_regression.R
+│   ├── 04_multiple_linear_regression.R
+│   ├── 05_model_comparison.R
+│   └── utils.R
+│
 ├── data/
-│   └── ...
+│   ├── raw/
+│   │   ├── README.md
+│   │   └── investments_VC.csv.zip
+│   │
+│   └── processed/
+│       ├── startup_valuation_clean.csv
+│       ├── startup_valuation_data.csv
+│       ├── train.csv
+│       └── test.csv
 │
 ├── outputs/
 │   ├── figures/
@@ -334,13 +351,42 @@ startup_valuation_analysis/
 │   │   ├── fig9_funding_rounds_by_industry.png
 │   │   └── fig10_vif.png
 │   │
-│   └── ...
+│   └── tables/
+│       ├── correlation_matrix.csv
+│       ├── descriptive_stats.csv
+│       ├── industry_median_valuation.csv
+│       ├── mlr_coefficients.csv
+│       ├── mlr_model.rds
+│       ├── model_comparison.csv
+│       ├── slr_model.rds
+│       ├── slr_summary.csv
+│       ├── standardized_coefficients.csv
+│       └── vif_table.csv
 │
-├── R/
-│   └── ...
-│
+├── install_packages.R
+├── run_all.R
+├── SESSION_INFO.txt
+├── .gitignore
+├── LICENSE
 └── README.md
 ```
+
+---
+
+### How the Pipeline Is Organized
+
+The repository follows a sequential and reproducible analysis workflow:
+
+`Raw Data` → `Preprocessing` → `EDA` → `SLR` → `MLR` → `Model Comparison` → `Outputs`
+
+- **`R/`** contains the modular analysis pipeline, from data preparation through model comparison.
+- **`data/raw/`** stores the original source data and its documentation.
+- **`data/processed/`** contains cleaned data along with the reproducible train/test split used for modeling.
+- **`outputs/figures/`** contains all visualizations generated during EDA, modeling, and diagnostics.
+- **`outputs/tables/`** stores statistical summaries, fitted model objects, coefficients, VIF results, and model-comparison metrics.
+- **`run_all.R`** executes the complete analysis pipeline.
+- **`install_packages.R`** installs the R dependencies required to reproduce the project.
+- **`SESSION_INFO.txt`** records the package and environment versions used for reproducibility.
 
 ---
 
