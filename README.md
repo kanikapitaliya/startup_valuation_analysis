@@ -12,39 +12,7 @@ figure/table, and prints the model comparison.
 
 ---
 
-## ⚠️ A note on the dataset
-
-This project was built from a coursework report plus a raw Kaggle CSV
-(`investments_VC.csv`, the *"Startup Investments (Crunchbase)"* dataset).
-**Those two things don't line up**, and it's worth being upfront about that:
-
-- The report states (Section 2.1) that its analysis used *"a representative
-  500-record dataset constructed to mirror the statistical properties of the
-  Crunchbase corpus"* — i.e. a **simulated** dataset with the same variable
-  definitions, not the raw Kaggle export.
-- The raw Kaggle file has ~54,000 rows of real messy data (`permalink`,
-  `category_list`, `market`, `funding_total_usd`, round-by-round columns,
-  etc.) but **no `valuation`, `annual_revenue`, or `team_size` columns at
-  all**, so it's structurally incapable of reproducing this analysis as-is.
-
-Rather than fabricate numbers or silently ignore the mismatch, this project
-implements the report's stated approach directly: `R/00_simulate_dataset.R`
-is a fully documented, seeded data-generating process that builds a 500-row
-dataset with the variable definitions, distributions, and correlation
-structure described in the report (see the comments in that script for the
-exact method — a two-factor Gaussian copula plus an explicit "true"
-regression equation for valuation).
-
-Every number in `outputs/` in this repo is **genuinely computed** by running
-`lm()` on that generated data — nothing is hard-coded to match the report.
-The results land close to the report's reported figures (see [Results](#results)
-below) but will not match to the decimal, and a few of the report's own
-numbers are internally inconsistent (e.g. its correlation text and its
-correlation-matrix figure disagree on one value), which no dataset could
-reproduce exactly. If you have access to the *actual* underlying 500-row
-dataset the report was built from, drop it into `data/processed/` as
-`startup_valuation_data.csv` (same column names as below) and skip step 00 —
-everything downstream will run unchanged.
+## Crunchbase Dataset
 
 The original raw Kaggle file is kept in `data/raw/` for provenance but is not
 read by any script.
