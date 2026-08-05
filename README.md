@@ -465,3 +465,15 @@ Potential next steps include:
 Funding provides the strongest individual signal in this analysis, but combining financial, operational, and industry information produces a substantially stronger model.
 
 The project demonstrates the complete statistical workflow from **EDA → transformation → regression → diagnostics → interpretation → out-of-sample evaluation**, with an emphasis on understanding *why* the model behaves as it does rather than treating prediction performance as the only objective.
+
+---
+
+## Author
+
+**Kanika Pitaliya**
+
+M.Sc. Data Analytics
+
+GitHub: https://github.com/kanikapitaliya
+
+---
